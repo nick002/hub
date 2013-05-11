@@ -981,7 +981,7 @@ help
       }
 
       edit_cmd = Array(git_editor).dup
-      edit_cmd << '-c' << 'set ft=gitcommit' if edit_cmd[0] =~ /^[mg]?vim$/
+      edit_cmd << '-c' << 'set ft=gitcommit tw=0 wrap lbr' if edit_cmd[0] =~ /^[mg]?vim$/
       edit_cmd << message_file
       system(*edit_cmd)
 
