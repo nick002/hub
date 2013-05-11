@@ -137,3 +137,18 @@ Then /^the file "([^"]*)" should have mode "([^"]*)"$/ do |file, expected_mode|
     mode.to_s(8).should =~ /#{expected_mode}$/
   end
 end
+
+Given /^the text editor exits with error status$/ do
+  text_editor_script "exit 1"
+end
+
+Given /^the text editor adds:$/ do |text|
+  text_editor_script <<-BASH
+    file="$3"
+    contents="$(cat "$file" 2>/dev/null || true)"
+    { echo "#{text}"
+      echo
+      echo "$contents"
+    } > "$file"
+  BASH
+end
