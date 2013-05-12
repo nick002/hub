@@ -22,20 +22,9 @@ Feature: hub pull-request
     Given the GitHub API server:
       """
       post('/repos/Manganeez/repo/pulls') {
-        { :base  => 'master',
-          :head  => 'mislav:master',
-          :title => 'hereyougo'
-        }.each do |param, value|
-          if params[param] != value
-            halt 422, json(
-              :message => "expected %s to be %s; got %s" % [
-                param.inspect,
-                value.inspect,
-                params[param].inspect
-              ]
-            )
-          end
-        end
+        assert :base  => 'master',
+               :head  => 'mislav:master',
+               :title => 'hereyougo'
         json :html_url => "https://github.com/Manganeez/repo/pull/12"
       }
       """
@@ -48,7 +37,7 @@ Feature: hub pull-request
       """
       post('/repos/mislav/coral/pulls') {
         halt 400 if request.content_charset != 'utf-8'
-        halt 422 if params[:title] != 'ăéñøü'
+        assert :title => 'ăéñøü'
         json :html_url => "the://url"
       }
       """
@@ -92,19 +81,8 @@ Feature: hub pull-request
     Given the GitHub API server:
       """
       post('/repos/mislav/coral/pulls') {
-        { :title => 'This title comes from vim!',
-          :body  => 'This body as well.'
-        }.each do |param, value|
-          if params[param] != value
-            halt 422, json(
-              :message => "expected %s to be %s; got %s" % [
-                param.inspect,
-                value.inspect,
-                params[param].inspect
-              ]
-            )
-          end
-        end
+        assert :title => 'This title comes from vim!',
+               :body  => 'This body as well.'
         json :html_url => "https://github.com/mislav/coral/pull/12"
       }
       """
@@ -122,7 +100,8 @@ Feature: hub pull-request
       """
       post('/repos/mislav/coral/pulls') {
         halt 422 if params[:title].include?("fail")
-        halt 422 unless params[:body] == "This title will fail"
+        assert :body => "This title will fail",
+               :title => "But this title will prevail"
         json :html_url => "https://github.com/mislav/coral/pull/12"
       }
       """
