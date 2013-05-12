@@ -1,3 +1,8 @@
+## 1.10.7
+
+* avoid hard breaks in `pull-request` message authored in Vim
+* save and reuse `pull-request` message if creating it failed
+
 ## 1.10.6 (2013-04-25)
 
 * compensate for new GitHub API enforcement
