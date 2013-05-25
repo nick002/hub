@@ -157,3 +157,12 @@ Given /^the text editor adds:$/ do |text|
     } > "$file"
   BASH
 end
+
+When /^I pass in:$/ do |input|
+  type(input)
+  @interactive.stdin.close
+end
+
+Given /^the git commit editor is "([^"]+)"$/ do |cmd|
+  set_env('GIT_EDITOR', cmd)
+end
