@@ -603,7 +603,7 @@ module Hub
 
         abort "Usage: hub browse [<USER>/]<REPOSITORY>" unless project
 
-        require 'CGI'
+        require 'cgi'
         # $ hub browse -- wiki
         path = case subpage = args.shift
         when 'commits'
@@ -737,7 +737,7 @@ module Hub
     #
 
     def branch_in_url(branch)
-      require 'CGI'
+      require 'cgi'
       CGI.escape(branch.short_name).gsub("%2F", "/")
     end
 
