@@ -974,7 +974,7 @@ help
     def pullrequest_editmsg(changes)
       message_file = pullrequest_editmsg_file
 
-      if File.exists?(message_file)
+      if valid_editmsg_file?(message_file)
         title, body = read_editmsg(message_file)
         previous_message = [title, body].compact.join("\n\n") if title
       end
@@ -1001,6 +1001,14 @@ help
       title, body = read_editmsg(message_file)
       abort "Aborting due to empty pull request title" unless title
       [title, body]
+    end
+
+    # This unfortunate hack is because older versions of hub never cleaned up
+    # the pullrequest_editmsg_file, which newer hub would pick up and
+    # misinterpret as a message which should be reused after a failed PR.
+    def valid_editmsg_file?(message_file)
+      File.exists?(message_file) &&
+        File.mtime(message_file) > File.mtime(__FILE__)
     end
 
     def pullrequest_editmsg_file
