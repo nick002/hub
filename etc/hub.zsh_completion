@@ -23,14 +23,14 @@ __hub_setup_zsh_fns () {
   (( $+functions[_git-browse] )) ||
   _git-browse () {
     _arguments \
-      '-u[user or user/repository]:user or user/repository:' \
-      '::subpage:(wiki commits issues)'
+      '-u[output the URL]' \
+      '2::subpage:(wiki commits issues)'
   }
 
   (( $+functions[_git-compare] )) ||
   _git-compare () {
     _arguments \
-      '-u[user]:user:' \
+      '-u[output the URL]' \
       ':[start...]end range:'
   }
 
@@ -58,9 +58,9 @@ __hub_setup_zsh_fns () {
       - set1 \
         '::title:' \
       - set2 \
-        '::issue-url:_urls' \
+        '-i[issue]:issue number:' \
       - set3 \
-        '-i[issue]:issue number:'
+        '::issue-url:_urls'
   }
 
   # stash the "real" command for later
