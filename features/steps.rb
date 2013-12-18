@@ -160,7 +160,7 @@ Given(/^the file named "(.+?)" is older than hub source$/) do |file|
   end
 end
 
-Given /^the text editor exits with error status$/ do
+Given(/^the text editor exits with error status$/) do
   text_editor_script "exit 1"
 end
 
