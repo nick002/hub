@@ -249,7 +249,7 @@ module Hub
 
     module OAuth
       def apply_authentication req, url
-        if (req.path =~ /\/authorizations$/)
+        if req.path =~ %r{^(/api/v3)?/authorizations$}
           super
         else
           user = url.user ? CGI.unescape(url.user) : config.username(url.host)
@@ -261,8 +261,13 @@ module Hub
       end
 
       def obtain_oauth_token host, user, two_factor_code = nil
+        auth_url = URI.parse("https://%s@%s/authorizations" % [CGI.escape(user), host])
+
+        # dummy request to trigger a 2FA SMS since a HTTP GET won't do it
+        post(auth_url) if !two_factor_code
+
         # first try to fetch existing authorization
-        res = get "https://#{CGI.escape user}@#{host}/authorizations" do |req|
+        res = get(auth_url) do |req|
           req['X-GitHub-OTP'] = two_factor_code if two_factor_code
         end
         unless res.success?
@@ -278,7 +283,7 @@ module Hub
           found['token']
         else
           # create a new authorization
-          res = post "https://#{CGI.escape user}@#{host}/authorizations",
+          res = post auth_url,
             :scopes => %w[repo], :note => 'hub', :note_url => oauth_app_url do |req|
               req['X-GitHub-OTP'] = two_factor_code if two_factor_code
             end
