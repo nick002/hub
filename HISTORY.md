@@ -1,7 +1,14 @@
 ## 1.10.7
 
-* avoid hard breaks in `pull-request` message authored in Vim
+* enable two-factor authentication (2FA) for API calls
+* detect default branch if named something other than "master"
 * save and reuse `pull-request` message if creating it failed
+* avoid hard breaks in `pull-request` message authored in Vim
+* improve zsh and bash shell completions
+* fix zsh and fish setup instructions
+* escape complex branch names in `browse` URLs
+* allow `--ff-only` in `merge <PULL-URL>`
+* display `hub help hub` using all available width of the terminal
 
 ## 1.10.6 (2013-04-25)
 
