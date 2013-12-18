@@ -224,13 +224,13 @@ EOF
     fi
   }
 
-  # hub pull-request [-f] [-m <MESSAGE>|-F <FILE>|-i <ISSUE>|<ISSUE-URL>] [-b <BASE>] [-h <HEAD>]
+  # git pull-request [-f] [<TITLE>|-i <ISSUE>] [-b <BASE>] [-h <HEAD>]
   _git_pull_request() {
-    local i c=2 flags="-f -m -F -i -b -h"
+    local i c=2 flags="-f -i -b -h"
     while [ $c -lt $cword ]; do
       i="${words[c]}"
       case "$i" in
-        -m|-F|-i|-b|-h)
+        -i|-b|-h)
           ((c++))
           flags=${flags/$i/}
           ;;
@@ -250,9 +250,6 @@ EOF
         #_get_comp_words_by_ref -n : cur
         __gitcomp_nl "$(__hub_heads)"
         # __ltrim_colon_completions "$cur"
-        ;;
-      -F)
-        COMPREPLY=( "$cur"* )
         ;;
       -f|*)
         __gitcomp "$flags"

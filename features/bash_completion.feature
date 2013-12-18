@@ -11,19 +11,15 @@ Feature: bash tab-completion
     When I press <Tab> again
     Then the completion menu should offer "pull pull-request push"
 
-  Scenario: "ci-" expands to "ci-status"
-    When I type "git ci-" and press <Tab>
-    Then the command should expand to "git ci-status"
-
   Scenario: Offers pull-request flags
     When I type "git pull-request -" and press <Tab>
     When I press <Tab> again
-    Then the completion menu should offer "-F -b -f -h -i -m" unsorted
+    Then the completion menu should offer "-b -f -h -i" unsorted
 
   Scenario: Doesn't offer already used pull-request flags
-    When I type "git pull-request -F myfile -h mybranch -" and press <Tab>
+    When I type "git pull-request -h mybranch -" and press <Tab>
     When I press <Tab> again
-    Then the completion menu should offer "-b -f -i -m" unsorted
+    Then the completion menu should offer "-b -f -i" unsorted
 
   Scenario: Browse to issues
     When I type "git browse -- i" and press <Tab>

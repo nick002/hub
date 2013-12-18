@@ -13,17 +13,11 @@ Feature: zsh tab-completion
     When I press <Tab> again
     Then the command should expand to "git pull-request"
 
-  Scenario: "ci-" expands to "ci-status"
-    When I type "git ci-" and press <Tab>
-    Then the command should expand to "git ci-status"
-
   Scenario: Completion of pull-request arguments
     When I type "git pull-request -" and press <Tab>
     Then the completion menu should offer:
       | -b | base                                 |
       | -h | head                                 |
-      | -m | message                              |
-      | -F | file                                 |
       | -i | issue                                |
       | -f | force (skip check for local commits) |
 
@@ -36,7 +30,7 @@ Feature: zsh tab-completion
     Then the command should expand to "git browse -- issues"
 
   # In this combination, zsh uses completion support from a bash script.
-  Scenario: "ci-" expands to "ci-status"
+  Scenario: "crea" expands to "create"
     Given I'm using git-distributed base git completions
-    When I type "git ci-" and press <Tab>
-    Then the command should expand to "git ci-status"
+    When I type "git crea" and press <Tab>
+    Then the command should expand to "git create"
