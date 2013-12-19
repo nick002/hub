@@ -105,7 +105,7 @@ module Hub
     def pullrequest_patch project, pull_id
       res = get "https://%s/repos/%s/%s/pulls/%d" %
         [api_host(project.host), project.owner, project.name, pull_id] do |req|
-          req["Accept"] = "application/vnd.github.patch"
+          req["Accept"] = "application/vnd.github.v3.patch"
         end
       res.error! unless res.success?
       res.body
@@ -115,7 +115,7 @@ module Hub
     def commit_patch project, sha
       res = get "https://%s/repos/%s/%s/commits/%s" %
         [api_host(project.host), project.owner, project.name, sha] do |req|
-          req["Accept"] = "application/vnd.github.patch"
+          req["Accept"] = "application/vnd.github.v3.patch"
         end
       res.error! unless res.success?
       res.body
