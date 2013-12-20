@@ -1,6 +1,8 @@
 ## 1.10.7
 
 * enable two-factor authentication (2FA) for API calls
+* enable email-based GitHub Enterprise login
+* `hub am`: enable fetching pull request and commit patches from private repos
 * detect default branch if named something other than "master"
 * save and reuse `pull-request` message if creating it failed
 * avoid hard breaks in `pull-request` message authored in Vim
@@ -9,6 +11,10 @@
 * escape complex branch names in `browse` URLs
 * allow `--ff-only` in `merge <PULL-URL>`
 * display `hub help hub` using all available width of the terminal
+* `hub version` includes commit SHA when built from git
+* fix reading from git `core.pager` when the value contains spaces
+* expand environment variables in git `core.editor` value
+* hub loading speed improvements
 
 ## 1.10.6 (2013-04-25)
 
