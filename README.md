@@ -318,13 +318,13 @@ superpowers:
 
 ### git submodule
 
-    $ hub submodule add wycats/bundler vendor/bundler
+    $ git submodule add wycats/bundler vendor/bundler
     > git submodule add git://github.com/wycats/bundler.git vendor/bundler
 
-    $ hub submodule add -p wycats/bundler vendor/bundler
+    $ git submodule add -p wycats/bundler vendor/bundler
     > git submodule add git@github.com:wycats/bundler.git vendor/bundler
 
-    $ hub submodule add -b ryppl --name pip ryppl/pip vendor/pip
+    $ git submodule add -b ryppl --name pip ryppl/pip vendor/pip
     > git submodule add -b ryppl --name pip git://github.com/ryppl/pip.git vendor/pip
 
 

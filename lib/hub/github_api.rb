@@ -1,8 +1,4 @@
-require 'uri'
-require 'yaml'
 require 'forwardable'
-require 'fileutils'
-require 'cgi'
 
 module Hub
   # Client for the GitHub v3 API.
@@ -99,6 +95,38 @@ module Hub
         [api_host(project.host), project.owner, project.name, pull_id]
       res.error! unless res.success?
       res.data
+    end
+
+    # Public: Fetch a pull request's patch
+    def pullrequest_patch project, pull_id
+      res = get "https://%s/repos/%s/%s/pulls/%d" %
+        [api_host(project.host), project.owner, project.name, pull_id] do |req|
+          req["Accept"] = "application/vnd.github.v3.patch"
+        end
+      res.error! unless res.success?
+      res.body
+    end
+
+    # Public: Fetch the patch from a commit
+    def commit_patch project, sha
+      res = get "https://%s/repos/%s/%s/commits/%s" %
+        [api_host(project.host), project.owner, project.name, sha] do |req|
+          req["Accept"] = "application/vnd.github.v3.patch"
+        end
+      res.error! unless res.success?
+      res.body
+    end
+
+    # Public: Fetch the first raw blob from a gist
+    def gist_raw gist_id
+      res = get("https://%s/gists/%s" % [api_host('github.com'), gist_id])
+      res.error! unless res.success?
+      raw_url = res.data['files'].values.first['raw_url']
+      res = get(raw_url) do |req|
+        req['Accept'] = '*/*'
+      end
+      res.error! unless res.success?
+      res.body
     end
 
     # Returns parsed data from the new pull request.
@@ -204,7 +232,7 @@ module Hub
 
       def request_uri url
         str = url.request_uri
-        str = '/api/v3' << str if url.host != 'api.github.com'
+        str = '/api/v3' << str if url.host != 'api.github.com' && url.host != 'gist.github.com'
         str
       end
 
@@ -293,8 +321,15 @@ module Hub
       end
     end
 
+    module GistAuth
+      def apply_authentication(req, url)
+        super unless url.host == 'gist.github.com'
+      end
+    end
+
     include HttpMethods
     include OAuth
+    include GistAuth
 
     # Filesystem store suitable for Configuration
     class FileStore
@@ -333,12 +368,55 @@ module Hub
 
       def load
         existing_data = File.read(@filename)
-        @data.update YAML.load(existing_data) unless existing_data.strip.empty?
+        @data.update yaml_load(existing_data) unless existing_data.strip.empty?
       end
 
       def save
-        FileUtils.mkdir_p File.dirname(@filename)
-        File.open(@filename, 'w', 0600) {|f| f << YAML.dump(@data) }
+        mkdir_p File.dirname(@filename)
+        File.open(@filename, 'w', 0600) {|f| f << yaml_dump(@data) }
+      end
+
+      def mkdir_p(dir)
+        dir.split('/').inject do |parent, name|
+          d = File.join(parent, name)
+          Dir.mkdir(d) unless File.exist?(d)
+          d
+        end
+      end
+
+      def yaml_load(string)
+        hash = {}
+        host = nil
+        string.split("\n").each do |line|
+          case line
+          when /^---\s*$/, /^\s*(?:#|$)/
+            # ignore
+          when /^(.+):\s*$/
+            host = hash[$1] = []
+          when /^([- ]) (.+?): (.+)/
+            key, value = $2, $3
+            host << {} if $1 == '-'
+            host.last[key] = value
+          else
+            raise "unsupported YAML line: #{line}"
+          end
+        end
+        hash
+      end
+
+      def yaml_dump(data)
+        yaml = ['---']
+        data.each do |host, values|
+          yaml << "#{host}:"
+          values.each do |hash|
+            dash = '-'
+            hash.each do |key, value|
+              yaml << "#{dash} #{key}: #{value}"
+              dash = ' '
+            end
+          end
+        end
+        yaml.join("\n")
       end
     end
 

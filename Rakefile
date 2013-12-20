@@ -7,6 +7,7 @@ require 'rake/testtask'
 def command?(util)
   Rake::Task[:load_path].invoke
   context = Object.new
+  require 'uri'
   require 'hub/context'
   context.extend Hub::Context
   context.send(:command?, util)
@@ -95,6 +96,7 @@ end
 
 file "hub" => FileList.new("lib/hub.rb", "lib/hub/*.rb", "man/hub.1") do |task|
   Rake::Task[:load_path].invoke
+  require 'hub/version'
   require 'hub/standalone'
   Hub::Standalone.save(task.name)
 end
@@ -159,7 +161,7 @@ task :homebrew do
     sh 'git pull -q origin master'
 
     formula_file = 'Library/Formula/hub.rb'
-    sha = `curl -fsSL https://github.com/github/hub/tarball/v#{Hub::VERSION} | shasum`.split(/\s+/).first
+    sha = `curl -fsSL https://github.com/github/hub/archive/v#{Hub::VERSION}.tar.gz | shasum`.split(/\s+/).first
     abort unless $?.success? and sha.length == 40
 
     formula = File.read formula_file
