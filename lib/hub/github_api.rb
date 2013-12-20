@@ -123,7 +123,7 @@ module Hub
       res.error! unless res.success?
       raw_url = res.data['files'].values.first['raw_url']
       res = get(raw_url) do |req|
-        req['Accept'] = '*/*'
+        req['Accept'] = 'text/plain'
       end
       res.error! unless res.success?
       res.body
@@ -220,6 +220,7 @@ module Hub
         req['User-Agent'] = "Hub #{Hub::VERSION}"
         apply_authentication(req, url)
         yield req if block_given?
+        finalize_request(req, url)
 
         begin
           res = http.start { http.request(req) }
@@ -251,6 +252,12 @@ module Hub
         user = url.user ? CGI.unescape(url.user) : config.username(url.host)
         pass = config.password(url.host, user)
         req.basic_auth user, pass
+      end
+
+      def finalize_request(req, url)
+        if !req['Accept'] || req['Accept'] == '*/*'
+          req['Accept'] = 'application/vnd.github.v3+json'
+        end
       end
 
       def create_connection url
