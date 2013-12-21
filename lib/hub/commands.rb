@@ -72,14 +72,13 @@ module Hub
 
     # $ hub pull-request
     # $ hub pull-request "My humble contribution"
-    # $ hub pull-request -i 92
     # $ hub pull-request https://github.com/rtomayko/tilt/issues/92
     def pull_request(args)
       args.shift
       options = { }
       force = explicit_owner = false
       base_project = local_repo.main_project
-      head_project = local_repo.current_project
+      tracked_branch, head_project = remote_branch_and_project(method(:github_user))
 
       unless current_branch
         abort "Aborted: not currently on any branch."
@@ -120,10 +119,14 @@ module Hub
         end
       end
 
+      if options[:issue]
+        warn "Warning: Issue to pull request conversion is deprecated and might not work in the future."
+      end
+
       options[:project] = base_project
       options[:base] ||= master_branch.short_name
 
-      if tracked_branch = options[:head].nil? && current_branch.upstream
+      if options[:head].nil? && tracked_branch
         if !tracked_branch.remote?
           # The current branch is tracking another local branch. Pretend there is
           # no upstream configuration at all.
@@ -135,12 +138,6 @@ module Hub
         end
       end
       options[:head] ||= (tracked_branch || current_branch).short_name
-
-      # when no tracking, assume remote branch is published under active user's fork
-      user = github_user(head_project.host)
-      if head_project.owner != user and !tracked_branch and !explicit_owner
-        head_project = head_project.owned_by(user)
-      end
 
       remote_branch = "#{head_project.remote}/#{options[:head]}"
       options[:head] = "#{head_project.owner}:#{options[:head]}"
@@ -611,8 +608,8 @@ module Hub
           branch = master_branch
         else
           # $ hub browse
-          project = current_project
-          branch = current_branch && current_branch.upstream || master_branch
+          branch, project = remote_branch_and_project(method(:github_user))
+          branch ||= master_branch
         end
 
         abort "Usage: hub browse [<USER>/]<REPOSITORY>" unless project
@@ -642,11 +639,10 @@ module Hub
     def compare(args)
       args.shift
       browse_command(args) do
+        branch, project = remote_branch_and_project(method(:github_user))
         if args.empty?
-          branch = current_branch.upstream
           if branch and not branch.master?
             range = branch.short_name
-            project = current_project
           else
             abort "Usage: hub compare [USER] [<START>...]<END>"
           end
@@ -654,9 +650,9 @@ module Hub
           sha_or_tag = /((?:#{OWNER_RE}:)?\w[\w.-]+\w)/
           # replaces two dots with three: "sha1...sha2"
           range = args.pop.sub(/^#{sha_or_tag}\.\.#{sha_or_tag}$/, '\1...\2')
-          project = if owner = args.pop then github_project(nil, owner)
-                    else current_project
-                    end
+          if owner = args.pop
+            project = project.owned_by(owner)
+          end
         end
 
         project.web_url "/compare/#{range}"

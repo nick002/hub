@@ -149,9 +149,9 @@ hub also adds some custom commands that are otherwise not present in git:
     If <TITLE> is omitted, a text editor will open in which title and body of
     the pull request can be entered in the same manner as git commit message.
 
-    If instead of normal <TITLE> an issue number is given with `-i`, the pull
-    request will be attached to an existing GitHub issue. Alternatively, instead
-    of title you can paste a full URL to an issue on GitHub.
+    Issue to pull request conversion via `-i <ISSUE>` or <ISSUE-URL>
+    arguments is deprecated and will likely be removed from the future versions
+    of both hub and GitHub API.
 
 ## CONFIGURATION
 

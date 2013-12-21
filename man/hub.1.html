@@ -190,9 +190,9 @@ on the remote. To skip this check, use <code>-f</code>.</p>
 <p>If <var>TITLE</var> is omitted, a text editor will open in which title and body of
 the pull request can be entered in the same manner as git commit message.</p>
 
-<p>If instead of normal <var>TITLE</var> an issue number is given with <code>-i</code>, the pull
-request will be attached to an existing GitHub issue. Alternatively, instead
-of title you can paste a full URL to an issue on GitHub.</p></dd>
+<p>Issue to pull request conversion via <code>-i &lt;ISSUE></code> or <var>ISSUE-URL</var>
+arguments is deprecated and will likely be removed from the future versions
+of both hub and GitHub API.</p></dd>
 </dl>
 
 
@@ -312,9 +312,6 @@ $ git pull-request
 
 # explicit title, pull base &amp; head:
 $ git pull-request "I've implemented feature X" -b defunkt:master -h mislav:feature
-
-$ git pull-request -i 123
-[ attached pull request to issue #123 ]
 </code></pre>
 
 <h3 id="git-checkout">git checkout</h3>
