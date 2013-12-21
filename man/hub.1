@@ -149,7 +149,7 @@ Opens a pull request on GitHub for the project that the "origin" remote points t
 If \fITITLE\fR is omitted, a text editor will open in which title and body of the pull request can be entered in the same manner as git commit message\.
 .
 .IP
-If instead of normal \fITITLE\fR an issue number is given with \fB\-i\fR, the pull request will be attached to an existing GitHub issue\. Alternatively, instead of title you can paste a full URL to an issue on GitHub\.
+Issue to pull request conversion via \fB\-i <ISSUE>\fR or \fIISSUE\-URL\fR arguments is deprecated and will likely be removed from the future versions of both hub and GitHub API\.
 .
 .SH "CONFIGURATION"
 Hub will prompt for GitHub username & password the first time it needs to access the API and exchange it for an OAuth token, which it saves in "~/\.config/hub"\.
@@ -300,9 +300,6 @@ $ git pull\-request
 
 # explicit title, pull base & head:
 $ git pull\-request "I\'ve implemented feature X" \-b defunkt:master \-h mislav:feature
-
-$ git pull\-request \-i 123
-[ attached pull request to issue #123 ]
 .
 .fi
 .
